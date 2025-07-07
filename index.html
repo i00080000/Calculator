@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Calculator</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI Symbol', 'Segoe UI', Arial, sans-serif;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    box-sizing: border-box;
+    color: #fff;
+    text-shadow: 0 0 3px #000;
+    direction: rtl;
+    text-align: right;
+  }
+  .calculator, .history {
+    background-color: transparent;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px white, 0 0 0 2px white;
+    width: 350px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .display {
+    background-color: transparent;
+    color: white;
+    font-size: 24px;
+    height: 40px;
+    text-align: right;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    border: 1px solid #444;
+    text-shadow: 0 0 4px #000;
+  }
+  .display .minus {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    display: inline-block;
+    margin: 0 2px;
+  }
+  .display .power {
+    color: yellow;
+    font-weight: bold;
+    animation: flash 0.5s ease-in-out;
+    text-shadow: 0 0 5px #ff0;
+  }
+  .display .power sup {
+    color: white;
+    font-size: 0.6em;
+    text-shadow: none;
+  }
+  @keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+  .top-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .top-row button, .buttons button {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: 0 0 3px #000;
+    transition: background-color 0.3s ease;
+  }
+  .top-row button.red { background-color: red; }
+  .top-row button.orange, .buttons .orange {
+    background-color: orange;
+    color: black;
+    text-shadow: none;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+  button:hover { background-color: #777; }
+  button:active {
+    box-shadow: 0 0 10px #fff inset, 0 0 10px #fff;
+  }
+  button.empty {
+    background-color: #555;
+    border-radius: 5px;
+    border: none;
+    color: transparent;
+    cursor: default;
+    user-select: none;
+    pointer-events: none;
+    text-shadow: none;
+    box-shadow: none;
+  }
+  #decimal-selector {
+    display: none;
+    position: absolute;
+    background: #222;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 5px;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    color: white;
+    text-shadow: 0 0 3px black;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    text-align: center;
+    direction: rtl;
+  }
+  #decimal-selector div {
+    margin-bottom: 5px;
+  }
+  #decimal-selector button {
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 2px;
+    cursor: pointer;
+    text-shadow: 0 0 2px black;
+    transition: background-color 0.3s ease;
+  }
+  #decimal-selector button:hover {
+    background-color: #666;
+  }
+  #message-box {
+    display: none;
+    background: #222;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    text-align: center;
+    box-shadow: 0 0 10px #000;
+    max-width: 350px;
+    word-wrap: break-word;
+    direction: rtl;
+  }
+  .history {
+    overflow-y: auto;
+    max-height: 600px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 0 3px black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  .history button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .history button:hover svg {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+  }
+  .history-entry {
+    border-bottom: 1px solid white;
+    padding: 10px 0;
+    word-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+  <div class="history">
+    <button onclick="clearHistory()" title="„”Õ «· «—ÌŒ">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M3 6h18M9 6v12m6-12v12M4 6l1 14a2 2 0 002 2h10a2 2 0 002-2l1-14M10 6V4a2 2 0 012-2h0a2 2 0 012 2v2"
+              stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div id="history"></div>
+  </div>
+
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="top-row">
+      <button class="red" onclick="clearAll()">C</button>
+      <button class="orange" onclick="backspace()">&#9003;</button>
+    </div>
+
+    <div class="buttons">
+      <button onclick="addFunc('+')">+</button>
+      <button onclick="addFunc('-','&minus;')">&minus;</button>
+      <button onclick="addFunc('*','&times;')">&times;</button>
+      <button onclick="addFunc('/','&divide;')">&divide;</button>
+      <button onclick="addFunc('%')">%</button>
+
+      <button onclick="addSqrt()">&radic;</button>
+      <button onclick="addFunc('(')">(</button>
+      <button onclick="addFunc(')')">)</button>
+      <button onclick="addOneOverX()">1/x</button>
+      <button onclick="addFactorial()">n!</button>
+      <button onclick="addCbrt()">&#8731;</button>
+
+      <button onclick="startPowerMode()">x<sup>y</sup></button>
+      <button onclick="squareLastValue()">x<sup>2</sup></button>
+      <button onclick="cubeLastValue()">x<sup>3</sup></button>
+      <button onclick="roundToDecimal()">&asymp;</button>
+
+      <button onclick="addFunc('Math.tan(', 'tan(')">tan</button>
+      <button onclick="addFunc('Math.log10(', 'log(')">log</button>
+      <button onclick="addFunc('Math.sin(', 'sin(')">sin</button>
+      <button onclick="addFunc('Math.cos(', 'cos(')">cos</button>
+      <button onclick="addFunc('Math.log(', 'ln(')">ln</button>
+
+      <button onclick="addFunc('9')">9</button>
+      <button onclick="addFunc('8')">8</button>
+      <button onclick="addFunc('7')">7</button>
+      <button class="empty" disabled></button>
+      <button class="empty" disabled></button>
+
+      <button onclick="addFunc('6')">6</button>
+      <button onclick="addFunc('5')">5</button>
+      <button onclick="addFunc('4')">4</button>
+      <button class="empty" disabled></button>
+      <button class="empty" disabled></button>
+
+      <button onclick="addFunc('3')">3</button>
+      <button onclick="addFunc('2')">2</button>
+      <button onclick="addFunc('1')">1</button>
+      <button class="empty" disabled></button>
+      <button class="empty" disabled></button>
+
+      <button class="orange" style="grid-column: span 2;" onclick="calculate()">=</button>
+      <button onclick="addFunc(lastAnswer.toString())">Ans</button>
+      <button onclick="addFunc('0')">0</button>
+      <button onclick="addFunc('.')">.</button>
+    </div>
+
+    <div id="decimal-selector">
+      <div></div>
+      <div>
+        <button onclick="selectDecimal(0)">0</button>
+        <button onclick="selectDecimal(1)">1</button>
+        <button onclick="selectDecimal(2)">2</button>
+        <button onclick="selectDecimal(3)">3</button>
+        <button onclick="selectDecimal(4)">4</button>
+        <button onclick="selectDecimal(5)">5</button>
+      </div>
+    </div>
+    <div id="message-box"></div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+    const historyDiv = document.getElementById('history');
+    const messageBox = document.getElementById('message-box');
+    let currentInput = ""; // Ì” Œœ„ · Œ“Ì‰ «· ⁄»Ì— «·—Ì«÷Ì «·ﬁ«»· ·· ﬁÌÌ„ »Ê«”ÿ… eval
+    let currentInputDisplay = ""; // Ì” Œœ„ ·⁄—÷ «· ⁄»Ì— ··„” Œœ„ („⁄ —„Ê“ HTML)
+    let lastAnswer = 0;
+    let powerMode = false; // ·  »⁄ Ê÷⁄ «·√” x^y
+    let powerBase = ""; // · Œ“Ì‰ «·√”«” ›Ì Ê÷⁄ «·√”
+
+    // œ«·… „”«⁄œ… ·Õ”«» «··Ê€«—Ì „ «·⁄‘—Ì (base 10)
+    function log10(x) {
+      return Math.log(x) / Math.LN10;
+    }
+
+    //  Õ„Ì· «· «—ÌŒ «·„Õ›ÊŸ ⁄‰œ »œ¡  ‘€Ì· «·’›Õ…
+    window.onload = () => {
+      const savedHistory = localStorage.getItem('calcHistory');
+      if (savedHistory) {
+        historyDiv.innerHTML = savedHistory;
+      }
+    };
+
+    // œ«·… · ‰”Ìﬁ «·√—ﬁ«„ »≈÷«›… ›Ê«’· «·√·Ê›
+    function formatWithCommas(x) {
+      if (x === null || x === undefined) return '';
+      let parts = x.toString().split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return parts.join('.');
+    }
+
+    //  ÕœÌÀ ‘«‘… «·⁄—÷
+    function updateDisplay() {
+      if (/^-?\d+(\.\d+)?$/.test(currentInput)) {
+        display.innerHTML = formatWithCommas(currentInput);
+      } else {
+        display.innerHTML = currentInputDisplay || "0";
+      }
+    }
+
+    // ≈÷«›… «·Ã–— «· —»Ì⁄Ì
+    function addSqrt() {
+      currentInput += 'Math.sqrt(';
+      currentInputDisplay += '&radic;(';
+      updateDisplay();
+    }
+
+    // ≈÷«›… «·Ã–— «· ﬂ⁄Ì»Ì
+    function addCbrt() {
+      currentInput += 'Math.cbrt(';
+      currentInputDisplay += '&#8731;(';
+      updateDisplay();
+    }
+
+    // ≈÷«›… 1/x
+    function addOneOverX() {
+      currentInput += '1/(';
+      currentInputDisplay += '1/(';
+      updateDisplay();
+    }
+
+    // ≈÷«›… œ«·… «·⁄«„·Ì (Factorial)
+    function addFactorial() {
+      currentInput += 'factorial(';
+      currentInputDisplay += 'n!('; 
+      updateDisplay();
+    }
+
+    //  ⁄œÌ· œ«·… addFunc ·≈€·«ﬁ «·ﬁÊ”  ·ﬁ«∆Ì« »⁄œ ﬂ «»… —ﬁ„ √Ê ‰ﬁÿ… œ«Œ· œ«·… √Ê ﬁÊ” „› ÊÕ
+    function addFunc(val, disp = null) {
+      if (powerMode) {
+        currentInput += val + ')';
+        currentInputDisplay = currentInputDisplay.replace(/<sup><\/sup>/, `<sup>${disp || val}</sup>`);
+        powerMode = false;
+        powerBase = "";
+        updateDisplay();
+        return;
+      }
+
+      const isNumberOrDot = /^[0-9.]$/.test(val);
+
+      // «· Õﬁﬁ „‰ ÊÃÊœ œ«·… „› ÊÕ… ﬁ»· «·ﬁÊ” «·„› ÊÕ «·√ŒÌ—
+      const funcOpenMatch = currentInput.match(/(Math\.(sin|cos|tan|log10|log|ln|sqrt|cbrt|pow|factorial)\()$/);
+
+      if (isNumberOrDot && funcOpenMatch) {
+        currentInput += val + ')';
+        currentInputDisplay += (disp || val) + ')';
+        updateDisplay();
+        return;
+      }
+
+      // Õ«·… «·ﬁÊ” «·„› ÊÕ «·⁄«œÌ
+      if (isNumberOrDot && currentInput.slice(-1) === '(') {
+        currentInput += val + ')';
+        currentInputDisplay += (disp || val) + ')';
+        updateDisplay();
+        return;
+      }
+
+      currentInput += val;
+      currentInputDisplay += disp || val;
+      updateDisplay();
+    }
+
+    // ⁄—÷ „‰ ﬁÌ «·√—ﬁ«„ «·⁄‘—Ì… ·· ﬁ—Ì»
+    function roundToDecimal() {
+      messageBox.style.display = 'none';
+      document.getElementById('decimal-selector').style.display = 'block';
+    }
+
+    // «Œ Ì«— ⁄œœ «·√—ﬁ«„ «·⁄‘—Ì… ·· ﬁ—Ì»
+    function selectDecimal(num) {
+      document.getElementById('decimal-selector').style.display = 'none';
+      messageBox.style.display = 'none';
+      
+      const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/); 
+      
+      if (match) {
+        const number = parseFloat(match[1]);
+        const rounded = parseFloat(number.toFixed(num));
+
+        const lastIndex = currentInput.lastIndexOf(match[1]);
+        currentInput = currentInput.substring(0, lastIndex) + rounded;
+        
+        const lastDisplayIndex = currentInputDisplay.lastIndexOf(match[1]);
+        currentInputDisplay = currentInputDisplay.substring(0, lastDisplayIndex) + rounded;
+        
+        updateDisplay();
+      }
+    }
+
+    // »œ¡ Ê÷⁄ «·√” (x^y)
+    function startPowerMode() {
+      const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
+      if (!match) return;
+      
+      const base = match[1];
+      const baseIndex = currentInput.lastIndexOf(base);
+      
+      currentInput = currentInput.slice(0, baseIndex) + `Math.pow(${base},`;
+      currentInputDisplay = currentInputDisplay.slice(0, baseIndex) + `<span class="power">${base}<sup></sup></span>`;
+      
+      powerMode = true;
+      updateDisplay();
+    }
+
+    //  —»Ì⁄ ¬Œ— ﬁÌ„…
+    function squareLastValue() {
+      const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
+      if (!match) return;
+      
+      const value = match[1];
+      const baseIndex = currentInput.lastIndexOf(value);
+      
+      currentInput = currentInput.slice(0, baseIndex) + `Math.pow(${value},2)`;
+      currentInputDisplay = currentInputDisplay.slice(0, baseIndex) + `<span class="power">${value}<sup>2</sup></span>`;
+      updateDisplay();
+    }
+
+    //  ﬂ⁄Ì» ¬Œ— ﬁÌ„…
+    function cubeLastValue() {
+      const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
+      if (!match) return;
+      
+      const value = match[1];
+      const baseIndex = currentInput.lastIndexOf(value);
+      
+      currentInput = currentInput.slice(0, baseIndex) + `Math.pow(${value},3)`;
+      currentInputDisplay = currentInputDisplay.slice(0, baseIndex) + `<span class="power">${value}<sup>3</sup></span>`;
+      updateDisplay();
+    }
+
+    // „”Õ ﬂ· ‘Ì¡ (C)
+    function clearAll() {
+      currentInput = "";
+      currentInputDisplay = "";
+      powerMode = false;
+      powerBase = "";
+      updateDisplay();
+      messageBox.style.display = 'none';
+      document.getElementById('decimal-selector').style.display = 'none';
+    }
+
+    // „”Õ ¬Œ— „œŒ· (Backspace)
+    function backspace() {
+      if (currentInput.length === 0) return;
+      
+      if (powerMode) {
+        powerMode = false;
+        const match = currentInput.match(/(.*)Math\.pow\(([^,]+),$/);
+        if (match) {
+          currentInput = match[1] + match[2];
+          currentInputDisplay = currentInputDisplay.replace(/<span class="power">[^<]*<sup><\/sup><\/span>$/, match[2]);
+        } else {
+          currentInput = currentInput.slice(0, -Math.pow.name.length - 2);
+          currentInputDisplay = currentInputDisplay.slice(0, currentInputDisplay.lastIndexOf('<sup>'));
+        }
+      } else {
+        currentInput = currentInput.slice(0, -1);
+        currentInputDisplay = currentInputDisplay.slice(0, -1);
+        if (currentInputDisplay.endsWith('&times;')) {
+            currentInputDisplay = currentInputDisplay.slice(0, -7);
+        } else if (currentInputDisplay.endsWith('&divide;')) {
+            currentInputDisplay = currentInputDisplay.slice(0, -8);
+        } else if (currentInputDisplay.endsWith('&minus;')) {
+            currentInputDisplay = currentInputDisplay.slice(0, -7);
+        } else if (currentInputDisplay.endsWith('&radic;(')) {
+            currentInput = currentInput.slice(0, -'Math.sqrt('.length);
+            currentInputDisplay = currentInputDisplay.slice(0, -'&radic;('.length);
+        } else if (currentInputDisplay.endsWith('&#8731;(')) {
+            currentInput = currentInput.slice(0, -'Math.cbrt('.length);
+            currentInputDisplay = currentInputDisplay.slice(0, -'&#8731;('.length);
+        } else if (currentInputDisplay.endsWith('n!(')) {
+            currentInput = currentInput.slice(0, -'factorial('.length);
+            currentInputDisplay = currentInputDisplay.slice(0, -'n!('.length);
+        }
+      }
+      updateDisplay();
+    }
+
+    // œ«·… ·Õ”«» «·⁄«„·Ì (Factorial)
+    function factorial(n) {
+      n = Math.floor(n);
+      if (n < 0) return NaN;
+      if (n === 0 || n === 1) return 1;
+      if (n > 170) return Infinity;
+
+      let result = 1;
+      for (let i = 2; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    }
+
+    // „”Õ ”Ã· «· «—ÌŒ
+    function clearHistory() {
+      historyDiv.innerHTML = '';
+      localStorage.removeItem('calcHistory');
+    }
+
+    // Õ”«» «· ⁄»Ì—
+    function calculate() {
+      try {
+        if (!currentInput) {
+          display.innerHTML = "0";
+          return;
+        }
+
+        let expression = currentInput;
+        
+        expression = expression.replace(/(\d+(\.\d+)?)%/g, '($1/100)');
+
+        expression = expression.replace(/factorial\(([^)]+)\)/g, (match, n) => {
+          const num = parseFloat(n);
+          if (isNaN(num) || num < 0) throw new Error("Invalid factorial input");
+          return factorial(num);
+        });
+
+        const result = eval(expression);
+        
+        if (isNaN(result) || !isFinite(result)) {
+          display.innerHTML = "Œÿ√";
+          showMessage("Œÿ√ ›Ì «· ⁄»Ì— √Ê ‰ ÌÃ… €Ì— „⁄—›….");
+          return;
+        }
+
+        lastAnswer = result;
+        display.innerHTML = formatWithCommas(result.toString());
+
+        const entry = document.createElement('div');
+        entry.className = 'history-entry';
+        const displayForHistory = currentInputDisplay.replace(/&minus;/g, '-'); 
+        entry.innerHTML = `${displayForHistory} = ${formatWithCommas(result.toString())}`;
+        historyDiv.prepend(entry);
+        localStorage.setItem('calcHistory', historyDiv.innerHTML);
+
+        currentInput = result.toString();
+        currentInputDisplay = result.toString();
+        powerMode = false;
+        powerBase = "";
+        messageBox.style.display = 'none';
+        document.getElementById('decimal-selector').style.display = 'none';
+
+      } catch (error) {
+        display.innerHTML = "Œÿ√";
+        showMessage("Œÿ√ ›Ì «· ⁄»Ì—: " + error.message);
+        console.error("Calculator error:", error);
+      }
+    }
+
+    // œ«·… ·⁄—÷ «·—”«∆· ··„” Œœ„
+    function showMessage(msg) {
+        messageBox.textContent = msg;
+        messageBox.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
