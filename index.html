@@ -193,7 +193,7 @@
 </head>
 <body>
   <div class="history">
-    <button onclick="clearHistory()" title="ãÓÍ ÇáÊÇÑíÎ">
+    <button onclick="clearHistory()">
       <svg viewBox="0 0 24 24" width="24" height="24">
         <path d="M3 6h18M9 6v12m6-12v12M4 6l1 14a2 2 0 002 2h10a2 2 0 002-2l1-14M10 6V4a2 2 0 012-2h0a2 2 0 012 2v2"
               stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -276,18 +276,18 @@
     const display = document.getElementById('display');
     const historyDiv = document.getElementById('history');
     const messageBox = document.getElementById('message-box');
-    let currentInput = ""; // íÓÊÎÏã áÊÎÒíä ÇáÊÚÈíÑ ÇáÑíÇÖí ÇáŞÇÈá ááÊŞííã ÈæÇÓØÉ eval
-    let currentInputDisplay = ""; // íÓÊÎÏã áÚÑÖ ÇáÊÚÈíÑ ááãÓÊÎÏã (ãÚ ÑãæÒ HTML)
+    let currentInput = ""; // ÙŠØ³ØªØ®Ø¯Ù… Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„ØªØ¹Ø¨ÙŠØ± Ø§Ù„Ø±ÙŠØ§Ø¶ÙŠ Ø§Ù„Ù‚Ø§Ø¨Ù„ Ù„Ù„ØªÙ‚ÙŠÙŠÙ… Ø¨ÙˆØ§Ø³Ø·Ø© eval
+    let currentInputDisplay = ""; // ÙŠØ³ØªØ®Ø¯Ù… Ù„Ø¹Ø±Ø¶ Ø§Ù„ØªØ¹Ø¨ÙŠØ± Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù… (Ù…Ø¹ Ø±Ù…ÙˆØ² HTML)
     let lastAnswer = 0;
-    let powerMode = false; // áÊÊÈÚ æÖÚ ÇáÃÓ x^y
-    let powerBase = ""; // áÊÎÒíä ÇáÃÓÇÓ İí æÖÚ ÇáÃÓ
+    let powerMode = false; // Ù„ØªØªØ¨Ø¹ ÙˆØ¶Ø¹ Ø§Ù„Ø£Ø³ x^y
+    let powerBase = ""; // Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ø£Ø³Ø§Ø³ ÙÙŠ ÙˆØ¶Ø¹ Ø§Ù„Ø£Ø³
 
-    // ÏÇáÉ ãÓÇÚÏÉ áÍÓÇÈ ÇááæÛÇÑíÊã ÇáÚÔÑí (base 10)
+    // Ø¯Ø§Ù„Ø© Ù…Ø³Ø§Ø¹Ø¯Ø© Ù„Ø­Ø³Ø§Ø¨ Ø§Ù„Ù„ÙˆØºØ§Ø±ÙŠØªÙ… Ø§Ù„Ø¹Ø´Ø±ÙŠ (base 10)
     function log10(x) {
       return Math.log(x) / Math.LN10;
     }
 
-    // ÊÍãíá ÇáÊÇÑíÎ ÇáãÍİæÙ ÚäÏ ÈÏÁ ÊÔÛíá ÇáÕİÍÉ
+    // ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØªØ§Ø±ÙŠØ® Ø§Ù„Ù…Ø­ÙÙˆØ¸ Ø¹Ù†Ø¯ Ø¨Ø¯Ø¡ ØªØ´ØºÙŠÙ„ Ø§Ù„ØµÙØ­Ø©
     window.onload = () => {
       const savedHistory = localStorage.getItem('calcHistory');
       if (savedHistory) {
@@ -295,7 +295,7 @@
       }
     };
 
-    // ÏÇáÉ áÊäÓíŞ ÇáÃÑŞÇã ÈÅÖÇİÉ İæÇÕá ÇáÃáæİ
+    // Ø¯Ø§Ù„Ø© Ù„ØªÙ†Ø³ÙŠÙ‚ Ø§Ù„Ø£Ø±Ù‚Ø§Ù… Ø¨Ø¥Ø¶Ø§ÙØ© ÙÙˆØ§ØµÙ„ Ø§Ù„Ø£Ù„ÙˆÙ
     function formatWithCommas(x) {
       if (x === null || x === undefined) return '';
       let parts = x.toString().split('.');
@@ -303,7 +303,7 @@
       return parts.join('.');
     }
 
-    // ÊÍÏíË ÔÇÔÉ ÇáÚÑÖ
+    // ØªØ­Ø¯ÙŠØ« Ø´Ø§Ø´Ø© Ø§Ù„Ø¹Ø±Ø¶
     function updateDisplay() {
       if (/^-?\d+(\.\d+)?$/.test(currentInput)) {
         display.innerHTML = formatWithCommas(currentInput);
@@ -312,35 +312,35 @@
       }
     }
 
-    // ÅÖÇİÉ ÇáÌĞÑ ÇáÊÑÈíÚí
+    // Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¬Ø°Ø± Ø§Ù„ØªØ±Ø¨ÙŠØ¹ÙŠ
     function addSqrt() {
       currentInput += 'Math.sqrt(';
       currentInputDisplay += '&radic;(';
       updateDisplay();
     }
 
-    // ÅÖÇİÉ ÇáÌĞÑ ÇáÊßÚíÈí
+    // Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¬Ø°Ø± Ø§Ù„ØªÙƒØ¹ÙŠØ¨ÙŠ
     function addCbrt() {
       currentInput += 'Math.cbrt(';
       currentInputDisplay += '&#8731;(';
       updateDisplay();
     }
 
-    // ÅÖÇİÉ 1/x
+    // Ø¥Ø¶Ø§ÙØ© 1/x
     function addOneOverX() {
       currentInput += '1/(';
       currentInputDisplay += '1/(';
       updateDisplay();
     }
 
-    // ÅÖÇİÉ ÏÇáÉ ÇáÚÇãáí (Factorial)
+    // Ø¥Ø¶Ø§ÙØ© Ø¯Ø§Ù„Ø© Ø§Ù„Ø¹Ø§Ù…Ù„ÙŠ (Factorial)
     function addFactorial() {
       currentInput += 'factorial(';
       currentInputDisplay += 'n!('; 
       updateDisplay();
     }
 
-    // ÊÚÏíá ÏÇáÉ addFunc áÅÛáÇŞ ÇáŞæÓ ÊáŞÇÆíğÇ ÈÚÏ ßÊÇÈÉ ÑŞã Ãæ äŞØÉ ÏÇÎá ÏÇáÉ Ãæ ŞæÓ ãİÊæÍ
+    // ØªØ¹Ø¯ÙŠÙ„ Ø¯Ø§Ù„Ø© addFunc Ù„Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ù‚ÙˆØ³ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ø¨Ø¹Ø¯ ÙƒØªØ§Ø¨Ø© Ø±Ù‚Ù… Ø£Ùˆ Ù†Ù‚Ø·Ø© Ø¯Ø§Ø®Ù„ Ø¯Ø§Ù„Ø© Ø£Ùˆ Ù‚ÙˆØ³ Ù…ÙØªÙˆØ­
     function addFunc(val, disp = null) {
       if (powerMode) {
         currentInput += val + ')';
@@ -353,7 +353,7 @@
 
       const isNumberOrDot = /^[0-9.]$/.test(val);
 
-      // ÇáÊÍŞŞ ãä æÌæÏ ÏÇáÉ ãİÊæÍÉ ŞÈá ÇáŞæÓ ÇáãİÊæÍ ÇáÃÎíÑ
+      // Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† ÙˆØ¬ÙˆØ¯ Ø¯Ø§Ù„Ø© Ù…ÙØªÙˆØ­Ø© Ù‚Ø¨Ù„ Ø§Ù„Ù‚ÙˆØ³ Ø§Ù„Ù…ÙØªÙˆØ­ Ø§Ù„Ø£Ø®ÙŠØ±
       const funcOpenMatch = currentInput.match(/(Math\.(sin|cos|tan|log10|log|ln|sqrt|cbrt|pow|factorial)\()$/);
 
       if (isNumberOrDot && funcOpenMatch) {
@@ -363,7 +363,7 @@
         return;
       }
 
-      // ÍÇáÉ ÇáŞæÓ ÇáãİÊæÍ ÇáÚÇÏí
+      // Ø­Ø§Ù„Ø© Ø§Ù„Ù‚ÙˆØ³ Ø§Ù„Ù…ÙØªÙˆØ­ Ø§Ù„Ø¹Ø§Ø¯ÙŠ
       if (isNumberOrDot && currentInput.slice(-1) === '(') {
         currentInput += val + ')';
         currentInputDisplay += (disp || val) + ')';
@@ -376,13 +376,13 @@
       updateDisplay();
     }
 
-    // ÚÑÖ ãäÊŞí ÇáÃÑŞÇã ÇáÚÔÑíÉ ááÊŞÑíÈ
+    // Ø¹Ø±Ø¶ Ù…Ù†ØªÙ‚ÙŠ Ø§Ù„Ø£Ø±Ù‚Ø§Ù… Ø§Ù„Ø¹Ø´Ø±ÙŠØ© Ù„Ù„ØªÙ‚Ø±ÙŠØ¨
     function roundToDecimal() {
       messageBox.style.display = 'none';
       document.getElementById('decimal-selector').style.display = 'block';
     }
 
-    // ÇÎÊíÇÑ ÚÏÏ ÇáÃÑŞÇã ÇáÚÔÑíÉ ááÊŞÑíÈ
+    // Ø§Ø®ØªÙŠØ§Ø± Ø¹Ø¯Ø¯ Ø§Ù„Ø£Ø±Ù‚Ø§Ù… Ø§Ù„Ø¹Ø´Ø±ÙŠØ© Ù„Ù„ØªÙ‚Ø±ÙŠØ¨
     function selectDecimal(num) {
       document.getElementById('decimal-selector').style.display = 'none';
       messageBox.style.display = 'none';
@@ -403,7 +403,7 @@
       }
     }
 
-    // ÈÏÁ æÖÚ ÇáÃÓ (x^y)
+    // Ø¨Ø¯Ø¡ ÙˆØ¶Ø¹ Ø§Ù„Ø£Ø³ (x^y)
     function startPowerMode() {
       const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
       if (!match) return;
@@ -418,7 +418,7 @@
       updateDisplay();
     }
 
-    // ÊÑÈíÚ ÂÎÑ ŞíãÉ
+    // ØªØ±Ø¨ÙŠØ¹ Ø¢Ø®Ø± Ù‚ÙŠÙ…Ø©
     function squareLastValue() {
       const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
       if (!match) return;
@@ -431,7 +431,7 @@
       updateDisplay();
     }
 
-    // ÊßÚíÈ ÂÎÑ ŞíãÉ
+    // ØªÙƒØ¹ÙŠØ¨ Ø¢Ø®Ø± Ù‚ÙŠÙ…Ø©
     function cubeLastValue() {
       const match = currentInput.match(/(-?\d+(\.\d+)?)(?!.*[-+*/%A-Za-z(])/);
       if (!match) return;
@@ -444,7 +444,7 @@
       updateDisplay();
     }
 
-    // ãÓÍ ßá ÔíÁ (C)
+    // Ù…Ø³Ø­ ÙƒÙ„ Ø´ÙŠØ¡ (C)
     function clearAll() {
       currentInput = "";
       currentInputDisplay = "";
@@ -455,7 +455,7 @@
       document.getElementById('decimal-selector').style.display = 'none';
     }
 
-    // ãÓÍ ÂÎÑ ãÏÎá (Backspace)
+    // Ù…Ø³Ø­ Ø¢Ø®Ø± Ù…Ø¯Ø®Ù„ (Backspace)
     function backspace() {
       if (currentInput.length === 0) return;
       
@@ -492,7 +492,7 @@
       updateDisplay();
     }
 
-    // ÏÇáÉ áÍÓÇÈ ÇáÚÇãáí (Factorial)
+    // Ø¯Ø§Ù„Ø© Ù„Ø­Ø³Ø§Ø¨ Ø§Ù„Ø¹Ø§Ù…Ù„ÙŠ (Factorial)
     function factorial(n) {
       n = Math.floor(n);
       if (n < 0) return NaN;
@@ -506,13 +506,13 @@
       return result;
     }
 
-    // ãÓÍ ÓÌá ÇáÊÇÑíÎ
+    // Ù…Ø³Ø­ Ø³Ø¬Ù„ Ø§Ù„ØªØ§Ø±ÙŠØ®
     function clearHistory() {
       historyDiv.innerHTML = '';
       localStorage.removeItem('calcHistory');
     }
 
-    // ÍÓÇÈ ÇáÊÚÈíÑ
+    // Ø­Ø³Ø§Ø¨ Ø§Ù„ØªØ¹Ø¨ÙŠØ±
     function calculate() {
       try {
         if (!currentInput) {
@@ -533,8 +533,8 @@
         const result = eval(expression);
         
         if (isNaN(result) || !isFinite(result)) {
-          display.innerHTML = "ÎØÃ";
-          showMessage("ÎØÃ İí ÇáÊÚÈíÑ Ãæ äÊíÌÉ ÛíÑ ãÚÑİÉ.");
+          display.innerHTML = "Ø®Ø·Ø£";
+          showMessage("Ø®Ø·Ø£ ÙÙŠ Ø§Ù„ØªØ¹Ø¨ÙŠØ± Ø£Ùˆ Ù†ØªÙŠØ¬Ø© ØºÙŠØ± Ù…Ø¹Ø±ÙØ©.");
           return;
         }
 
@@ -556,13 +556,13 @@
         document.getElementById('decimal-selector').style.display = 'none';
 
       } catch (error) {
-        display.innerHTML = "ÎØÃ";
-        showMessage("ÎØÃ İí ÇáÊÚÈíÑ: " + error.message);
+        display.innerHTML = "Ø®Ø·Ø£";
+        showMessage("Ø®Ø·Ø£ ÙÙŠ Ø§Ù„ØªØ¹Ø¨ÙŠØ±: " + error.message);
         console.error("Calculator error:", error);
       }
     }
 
-    // ÏÇáÉ áÚÑÖ ÇáÑÓÇÆá ááãÓÊÎÏã
+    // Ø¯Ø§Ù„Ø© Ù„Ø¹Ø±Ø¶ Ø§Ù„Ø±Ø³Ø§Ø¦Ù„ Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù…
     function showMessage(msg) {
         messageBox.textContent = msg;
         messageBox.style.display = 'block';
